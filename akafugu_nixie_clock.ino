@@ -239,7 +239,7 @@ void display_init(void)
   ASSR &= ~(1<<AS2);
   TIMSK2 &= ~(1<<OCIE2A);
 
-  TCCR2B = (1<<CS21); // Set Prescaler to clk/8 : 1 click = 1us. CS01=1
+  TCCR2B = (1<<CS21); // Set Prescaler to clk/8 : 1 click = 1us.
   TIMSK2 |= (1<<TOIE2); // Enable Overflow Interrupt Enable
   TCNT2 = 0; // Initialize counter
 
@@ -370,78 +370,73 @@ void set_indicator(uint8_t intensity, bool override_state = false)
   }
 }
 
-
-// Display multiplex routine for 4 digits
+// Display multiplex routine optimized for 4 digits
 void display_multiplex_4(void)
 {
   if (multiplex_counter == 0)
     clear_display();
-  else if (multiplex_counter == 1)
-    write_nixie(0, display_on ? data[5] : 10);
-  else if (multiplex_counter == 3)
+  else if (multiplex_counter >= 1 && multiplex_counter <= 10)
+    display_on ? write_nixie(0, data[5]) : clear_display();
+  else if (multiplex_counter == 11)
     clear_display();
-  else if (multiplex_counter == 4)
-    write_nixie(1, display_on ? data[4] : 10);
-  else if (multiplex_counter == 6)
+  else if (multiplex_counter >= 12 && multiplex_counter <= 21)
+    display_on ? write_nixie(1, data[4]) : clear_display();
+  else if (multiplex_counter == 22)
     clear_display();
-  else if (multiplex_counter == 7)
-    write_nixie(2, display_on ? data[3] : 10);
-  else if (multiplex_counter == 9)
+  else if (multiplex_counter >= 23 && multiplex_counter <= 32)
+    display_on ? write_nixie(2, data[3]) : clear_display();
+  else if (multiplex_counter == 33)
     clear_display();
-  else if (multiplex_counter == 10)
-    write_nixie(3, display_on ? data[2] : 10);
+  else if (multiplex_counter >= 34 && multiplex_counter <= 43)
+    display_on ? write_nixie(3, data[2]) : clear_display();
 
   multiplex_counter++;
 
-  if (multiplex_counter == 12) multiplex_counter = 0;
+  if (multiplex_counter == 44) multiplex_counter = 0;
 }
 
 // Display multiplex routine for up to 6 digits
-void display_multiplex(void)
+void display_multiplex_6(void)
 {
   if (multiplex_counter == 0)
     clear_display();
-  else if (multiplex_counter == 1)
-    write_nixie(0, display_on ? data[5] : 10);
-  else if (multiplex_counter == 3)
+  else if (multiplex_counter >= 1 && multiplex_counter <= 10)
+    display_on ? write_nixie(0, data[5]) : clear_display();
+  else if (multiplex_counter == 11)
     clear_display();
-  else if (multiplex_counter == 4)
-    write_nixie(1, display_on ? data[4] : 10);
-  else if (multiplex_counter == 6)
+  else if (multiplex_counter >= 12 && multiplex_counter <= 21)
+    display_on ? write_nixie(1, data[4]) : clear_display();
+  else if (multiplex_counter == 22)
     clear_display();
-  else if (multiplex_counter == 7)
-    write_nixie(2, display_on ? data[3] : 10);
-  else if (multiplex_counter == 9)
+  else if (multiplex_counter >= 23 && multiplex_counter <= 32)
+    display_on ? write_nixie(2, data[3]) : clear_display();
+  else if (multiplex_counter == 33)
     clear_display();
-  else if (multiplex_counter == 10)
-    write_nixie(3, display_on ? data[2] : 10);
-  else if (multiplex_counter == 12)
+  else if (multiplex_counter >= 34 && multiplex_counter <= 43)
+    display_on ? write_nixie(3, data[2]) : clear_display();
+  else if (multiplex_counter == 44)
     clear_display();
-  else if (multiplex_counter == 13)
-    write_nixie(4, display_on ? data[1] : 10);
-  else if (multiplex_counter == 15)
+  else if (multiplex_counter >= 45 && multiplex_counter <= 54)
+    display_on ? write_nixie(4, data[1]) : clear_display();
+
+  else if (multiplex_counter == 55)
     clear_display();
-  else if (multiplex_counter == 16)
-    write_nixie(5, display_on ? data[0] : 10);
+  else if (multiplex_counter >= 56 && multiplex_counter <= 65)
+    display_on ? write_nixie(4, data[1]) : clear_display();
 
   multiplex_counter++;
-	
-  if (multiplex_counter == 18) multiplex_counter = 0;
+
+  if (multiplex_counter == 66) multiplex_counter = 0;
 }
 
 uint8_t interrupt_counter = 0;
 uint16_t button_counter = 0;
 
-// 1 click = 1us. Overflow every 255 us
+// 1 click = 1us. 
 ISR(TIMER2_OVF_vect)
-{  
-  // display multiplex
-  if (++interrupt_counter == 3) {
-    // fixme: 4 and 6 digit mode should be configurable
-    //display_multiplex();
-    display_multiplex_4();
-    interrupt_counter = 0;
-  }
+{ 
+  display_multiplex_4();
+  interrupt_counter = 0;
 
   // button polling
   if (++button_counter == 150) {
@@ -457,10 +452,10 @@ void write_nixie(uint8_t digit, uint8_t value)
   clear_display();
 
   if (g_blink_on) {
-    if (g_blank == 4) value = 10;
-    else if (g_blank == 1 && (digit == 0 || digit == 1)) value = 10;
-    else if (g_blank == 2 && (digit == 2 || digit == 3)) value = 10;
-    else if (g_blank == 3 && (digit == 4 || digit == 5)) value = 10;
+    if (g_blank == 4) { clear_display(); return; }
+    else if (g_blank == 1 && (digit == 0 || digit == 1)) { clear_display(); return; }
+    else if (g_blank == 2 && (digit == 2 || digit == 3)) { clear_display(); return; }
+    else if (g_blank == 3 && (digit == 4 || digit == 5)) { clear_display(); return; }
   }
 
   if (g_antipoison && g_randomize_on) {
