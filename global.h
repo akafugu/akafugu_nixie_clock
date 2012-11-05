@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2012 Akafugu Corporation
+ * (C) 2011-12 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -13,36 +13,28 @@
  *
  */
 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+// GLOBAL include file: Should be the first file to include in all source files
+
+#include <Arduino.h>
 
 #include <stdbool.h>
+#include <inttypes.h>
 
-#define BUTTON_PORT PORTB
-#define BUTTON_DDR  DDRB
-#define BUTTON_PIN  PINB
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <avr/eeprom.h>
 
-#define BUTTON1_BIT  PORTB5
+#include "direct_pin_read.h"
 
-struct BUTTON_STATE
+struct PinMap
 {
-	bool b1_keydown : 1;
-	bool b1_keyup : 1;
-	bool b1_repeat : 1;
-	bool b2_keydown : 1;
-	bool b2_keyup : 1;
-	bool b2_repeat : 1;
-	
-	bool both_held : 1;
-	bool none_held : 1;
+    // Rotary encoder
+    static const uint8_t button = 13;
+    
+    // HV518 / HV5812
+    static const uint8_t data = A0;
+    static const uint8_t clock = A2;
+    static const uint8_t latch = A1;
+    static const uint8_t blank = 9;
 };
-
-void initialize_button(uint8_t pin1, uint8_t pin2);
-
-bool is_button_pressed(void);
-
-void get_button_state(struct BUTTON_STATE* buttons);
-
-void button_timer(void);
-
-#endif

@@ -13,15 +13,7 @@
  *
  */
 
-#include <stdbool.h>
-#include <inttypes.h>
-
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
-#include <avr/eeprom.h>
-
-#include "rotary.h"
+#include "global.h"
 
 #include <EEPROM.h>
 #include <Wire.h>
@@ -29,6 +21,7 @@
 
 WireRtcLib rtc;
 
+#include "rotary.h"
 #include "button.h"
 #include "rgbled.h"
 #include "pitches.h"
@@ -246,6 +239,9 @@ void display_init(void)
   // set up interrupt for SQW output from RTC
   PCICR |= (1 << PCIE2);
   PCMSK2 |= (1 << PCINT19);
+
+  // Initialize button
+  initialize_button(PinMap::button, -1);
 
   // Initialize rotary encoder
   rotary.begin();

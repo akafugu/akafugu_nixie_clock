@@ -28,7 +28,6 @@ extern volatile uint16_t g_rotary_moved_timer;
 #define ROTARY_2 PORTB7
 #define ROTARY_1_PIN PINB6
 #define ROTARY_2_PIN PINB7
-#define BUTTON PORTB5
 
 // Rotary encoder singleton
 Rotary rotary;
@@ -84,11 +83,8 @@ void Rotary::begin()
   ROTARY_DDR &= ~(_BV(ROTARY_1));
   ROTARY_DDR &= ~(_BV(ROTARY_2));
 
-  // rotary encoder button
-  ROTARY_DDR &= ~(_BV(BUTTON)); // button as input
-
   // enable pullups for all rotary encoder pins
-  ROTARY_PORT |= _BV(BUTTON) | _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
+  ROTARY_PORT |= _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
   
   // set up interrupt for rotary encoder pins
   PCICR |= (1 << PCIE0);
