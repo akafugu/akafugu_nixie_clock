@@ -31,6 +31,27 @@ struct PinMap
 {
     // Rotary encoder
     static const uint8_t button = 13;
+    // Colon dots
+    static const uint8_t dot1 = 5;
+    static const uint8_t dot2 = 6;
+    // Alarm on/off switch
+    static const uint8_t alarm_switch = 10;
+    // RTC SQW pin
+    static const uint8_t sqw = 3;
+    // Piezo
+    static const uint8_t piezo = 9;
+    // Nixie anodes (digits)
+    static const uint8_t digit0 = 2;
+    static const uint8_t digit1 = 4;
+    static const uint8_t digit2 = 7;
+    static const uint8_t digit3 = 8;
+    static const uint8_t digit4 = 11;
+    static const uint8_t digit5 = 12;
+    // K155ID1 nixie driver (must be PC0~PC3)
+    static const uint8_t nixie_driver0 = A0;
+    static const uint8_t nixie_driver1 = A1;
+    static const uint8_t nixie_driver2 = A2;
+    static const uint8_t nixie_driver3 = A3;
     
     // HV518 / HV5812
     static const uint8_t data = A0;

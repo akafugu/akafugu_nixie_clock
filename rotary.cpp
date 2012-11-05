@@ -22,6 +22,8 @@ extern volatile bool g_blink_on;
 extern volatile uint16_t g_rotary_moved_timer;
 
 // rotary encoder
+// NOTE: PB6 and PB7 are used for the oscillator on normal Arduino boards, and are not mapped to
+//       I/O pin numbers, so we will use direct pin access
 #define ROTARY_DDR  PORTB
 #define ROTARY_PORT PORTB
 #define ROTARY_1 PORTB6
@@ -83,8 +85,11 @@ void Rotary::begin()
   ROTARY_DDR &= ~(_BV(ROTARY_1));
   ROTARY_DDR &= ~(_BV(ROTARY_2));
 
+  // rotary encoder button
+  ROTARY_DDR &= ~(_BV(BUTTON)); // button as input
+
   // enable pullups for all rotary encoder pins
-  ROTARY_PORT |= _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
+  ROTARY_PORT |= _BV(BUTTON) | _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
   
   // set up interrupt for rotary encoder pins
   PCICR |= (1 << PCIE0);

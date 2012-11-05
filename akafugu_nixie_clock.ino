@@ -35,55 +35,26 @@ uint8_t multiplex_counter = 0;
 uint8_t display_on = false;
 
 // anodes (digits)
-#define DIGIT0_OFF PORTD |= _BV(PORTD2)
-#define DIGIT0_ON  PORTD &= ~(_BV(PORTD2))
+pin_direct_t digit0_pin;
+pin_direct_t digit1_pin;
+pin_direct_t digit2_pin;
+pin_direct_t digit3_pin;
+pin_direct_t digit4_pin;
+pin_direct_t digit5_pin;
 
-#define DIGIT1_OFF PORTD |= _BV(PORTD4)
-#define DIGIT1_ON  PORTD &= ~(_BV(PORTD4))
-
-#define DIGIT2_OFF PORTD |= _BV(PORTD7)
-#define DIGIT2_ON  PORTD &= ~(_BV(PORTD7))
-
-#define DIGIT3_OFF PORTB |= _BV(PORTB0)
-#define DIGIT3_ON  PORTB &= ~(_BV(PORTB0))
-
-#define DIGIT4_OFF PORTB |= _BV(PORTB3)
-#define DIGIT4_ON  PORTB &= ~(_BV(PORTB3))
-
-#define DIGIT5_OFF PORTB |= _BV(PORTB4)
-#define DIGIT5_ON  PORTB &= ~(_BV(PORTB4))
-
-// dots
-#define DOT_DDR DDRD
-#define DOT_PORT PORTD
-#define DOT_1 PORTD5
-#define DOT_2 PORTD6
-
-#define DOT_1_ON   DOT_PORT |= _BV(DOT_1)
-#define DOT_1_OFF  DOT_PORT &= ~(_BV(DOT_1))
-#define DOT_2_ON   DOT_PORT |= _BV(DOT_2)
-#define DOT_2_OFF  DOT_PORT &= ~(_BV(DOT_2))
-
-// driver (A~D = PC0~PC3)
+// K155ID1 nixie driver (A~D = PC0~PC3)
+// PC0~PC3 = 14~17 (A0~A3)
 #define DRIVER_DDR DDRC
 #define DRIVER_PORT PORTC
-// PC0~PC3 = 14~17
 
 // rotary encoder
 extern Rotary rotary;
 
 // alarm switch
-#define SWITCH_DDR  PORTB
-#define SWITCH_PORT PORTB
-#define SWITCH PORTB2
-#define SWITCH_PIN PINB2
+pin_direct_t switch_pin;
 
 // SQW pin from RTC
-#define SQW_DDR DDRD
-#define SQW_PORT PORTD
-#define SQW_PIN PORTD3 // PCINT19
-
-#define PIEZO 9
+pin_direct_t sqw_pin;
 
 uint8_t g_volume = 0;
 WireRtcLib::tm* t = NULL; // for holding RTC values
@@ -180,34 +151,66 @@ void display_init(void)
   // set INPUTS and OUTPUTS
 
   // digits
-  DDRD |= _BV(PORTD2) | _BV(PORTD4) | _BV(PORTD7);
-  DDRB |= _BV(PORTB0) | _BV(PORTB3) | _BV(PORTB4);
+  pinMode(PinMap::digit0, OUTPUT);
+  pinMode(PinMap::digit1, OUTPUT);
+  pinMode(PinMap::digit2, OUTPUT);
+  pinMode(PinMap::digit3, OUTPUT);
+  pinMode(PinMap::digit4, OUTPUT);
+  pinMode(PinMap::digit5, OUTPUT);
+  
+  digit0_pin.pin = PinMap::digit0;
+  digit0_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit0);
+  digit0_pin.bitmask = PIN_TO_BITMASK(PinMap::digit0);
+  digit1_pin.pin = PinMap::digit1;
+  digit1_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit1);
+  digit1_pin.bitmask = PIN_TO_BITMASK(PinMap::digit1);
+  digit2_pin.pin = PinMap::digit2;
+  digit2_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit2);
+  digit2_pin.bitmask = PIN_TO_BITMASK(PinMap::digit2);
+  digit3_pin.pin = PinMap::digit3;
+  digit3_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit3);
+  digit3_pin.bitmask = PIN_TO_BITMASK(PinMap::digit3);
+  digit4_pin.pin = PinMap::digit4;
+  digit4_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit4);
+  digit4_pin.bitmask = PIN_TO_BITMASK(PinMap::digit4);
+  digit5_pin.pin = PinMap::digit5;
+  digit5_pin.reg = PIN_TO_OUTPUT_REG(PinMap::digit5);
+  digit5_pin.bitmask = PIN_TO_BITMASK(PinMap::digit5);
 
   // dots
-  DOT_DDR |= _BV(DOT_1);
-  DOT_DDR |= _BV(DOT_2);
-  
+  pinMode(PinMap::dot1, OUTPUT);
+  pinMode(PinMap::dot2, OUTPUT);
+
   // driver
-  DRIVER_DDR |= _BV(0);
-  DRIVER_DDR |= _BV(1);
-  DRIVER_DDR |= _BV(2);
-  DRIVER_DDR |= _BV(3);
+  pinMode(PinMap::nixie_driver0, OUTPUT);
+  pinMode(PinMap::nixie_driver1, OUTPUT);
+  pinMode(PinMap::nixie_driver2, OUTPUT);
+  pinMode(PinMap::nixie_driver3, OUTPUT);
 
   // alarm switch
-  SWITCH_DDR &= ~(_BV(SWITCH)); // switch as input
-  SWITCH_PORT |= _BV(SWITCH); // enable pullup
+  pinMode(PinMap::alarm_switch, INPUT); // switch as input
+  digitalWrite(PinMap::alarm_switch, HIGH); // enable pullup
   
-  if ( (PINB & _BV(SWITCH_PIN)) == 0)
+  switch_pin.pin = PinMap::alarm_switch;
+  switch_pin.reg = PIN_TO_INPUT_REG(PinMap::alarm_switch);
+  switch_pin.bitmask = PIN_TO_BITMASK(PinMap::alarm_switch);
+  
+  if ( (*switch_pin.reg & switch_pin.bitmask) == 0)
     g_alarm_switch = true;
   else
     g_alarm_switch = false;
   
   // SQW output from RTC
-  SQW_DDR &= ~(_BV(SQW_PIN));
-  SQW_PORT |= _BV(SQW_PIN); // enable pullup
+  pinMode(PinMap::sqw, INPUT);
+  digitalWrite(PinMap::sqw, HIGH); // enable pullup
   
-  pinMode(PIEZO, OUTPUT);
-  digitalWrite(PIEZO, LOW);
+  sqw_pin.pin = PinMap::sqw;
+  sqw_pin.reg = PIN_TO_INPUT_REG(PinMap::sqw);
+  sqw_pin.bitmask = PIN_TO_BITMASK(PinMap::sqw);
+
+  // Piezo  
+  pinMode(PinMap::piezo, OUTPUT);
+  digitalWrite(PinMap::piezo, LOW);
 
   clear_display();
 
@@ -215,11 +218,11 @@ void display_init(void)
   read_eeprom();
   
   if (g_wakeup_sound) {
-    tone(PIEZO, NOTE_A4, 500);
+    tone(PinMap::piezo, NOTE_A4, 500);
     delay(100);
-    tone(PIEZO, NOTE_C3, 750);
+    tone(PinMap::piezo, NOTE_C3, 750);
     delay(100);
-    tone(PIEZO, NOTE_A4, 500);
+    tone(PinMap::piezo, NOTE_A4, 500);
     delay(500);
   }
   else {
@@ -237,6 +240,7 @@ void display_init(void)
   TCNT2 = 0; // Initialize counter
 
   // set up interrupt for SQW output from RTC
+  // fixme: hardcoded for pin 3
   PCICR |= (1 << PCIE2);
   PCMSK2 |= (1 << PCINT19);
 
@@ -249,7 +253,7 @@ void display_init(void)
 
   sei();	// Enable interrupts
   Wire.begin();
-	
+
   pca9685_wake();
   
   // Turn off all LEDs
@@ -325,11 +329,11 @@ void write_eeprom()
 
 void set_dots(bool dot1, bool dot2)
 {
-  if (dot1) DOT_1_ON;
-  else DOT_1_OFF;
+  if (dot1) digitalWrite(PinMap::dot1, HIGH);
+  else      digitalWrite(PinMap::dot1, LOW);
 
-  if (dot2) DOT_2_ON;
-  else DOT_2_OFF;
+  if (dot1) digitalWrite(PinMap::dot2, HIGH);
+  else      digitalWrite(PinMap::dot2, LOW);
 }
 
 #define INDICATOR_OFF  0
@@ -462,22 +466,22 @@ void write_nixie(uint8_t digit, uint8_t value)
 
   switch (digit) {
     case 0:
-      DIGIT0_ON;
+      DIRECT_PIN_LOW(digit0_pin.reg, digit0_pin.bitmask);
       break; 
     case 1:
-      DIGIT1_ON;
+      DIRECT_PIN_LOW(digit1_pin.reg, digit1_pin.bitmask);
       break; 
     case 2:
-      DIGIT2_ON;
+      DIRECT_PIN_LOW(digit2_pin.reg, digit2_pin.bitmask);
       break; 
     case 3:
-      DIGIT3_ON;
+      DIRECT_PIN_LOW(digit3_pin.reg, digit3_pin.bitmask);
       break; 
     case 4:
-      DIGIT4_ON;
+      DIRECT_PIN_LOW(digit4_pin.reg, digit4_pin.bitmask);
       break; 
     case 5:
-      DIGIT5_ON;
+      DIRECT_PIN_LOW(digit5_pin.reg, digit5_pin.bitmask);
       break; 
   }
 
@@ -487,12 +491,12 @@ void write_nixie(uint8_t digit, uint8_t value)
 
 void clear_display(void)
 {
-  DIGIT0_OFF;
-  DIGIT1_OFF;
-  DIGIT2_OFF;
-  DIGIT3_OFF;
-  DIGIT4_OFF;
-  DIGIT5_OFF;
+  DIRECT_PIN_HIGH(digit0_pin.reg, digit0_pin.bitmask);
+  DIRECT_PIN_HIGH(digit1_pin.reg, digit1_pin.bitmask);
+  DIRECT_PIN_HIGH(digit2_pin.reg, digit2_pin.bitmask);
+  DIRECT_PIN_HIGH(digit3_pin.reg, digit3_pin.bitmask);
+  DIRECT_PIN_HIGH(digit4_pin.reg, digit4_pin.bitmask);
+  DIRECT_PIN_HIGH(digit5_pin.reg, digit5_pin.bitmask);
 }
 
 void set_number(uint8_t num)
@@ -503,7 +507,7 @@ void set_number(uint8_t num)
 // RTC SQW output interrupt and alarm switch change interrupt
 ISR( PCINT2_vect )
 {
-  if ( (PIND & _BV(SQW_PIN)) == 0) {
+  if ( (*sqw_pin.reg & sqw_pin.bitmask) == 0) {
     g_update_rtc = true;
     
     if (g_pulse_direction == 1) {
@@ -524,14 +528,14 @@ ISR( PCINT2_vect )
     g_blink_on = true;
   }
   
-  if (g_alarm_switch == false && (PINB & _BV(SWITCH_PIN)) == 0) {
+  if (g_alarm_switch == false && (*switch_pin.reg & switch_pin.bitmask) == 0) {
     g_alarm_switch = true;
     if (g_clock_state == STATE_CLOCK) {
       g_clock_state = STATE_SHOW_ALARM;
       g_show_alarm_counter = 150;
     }
   }
-  else if ((PINB & _BV(SWITCH_PIN)) == 0)
+  else if ( (*switch_pin.reg & switch_pin.bitmask) == 0)
     g_alarm_switch = true;
   else
     g_alarm_switch = false;
@@ -666,11 +670,11 @@ void sound_alarm()
 {
   data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = 10;  
   
-  tone(9, NOTE_A4, 500);
+  tone(PinMap::piezo, NOTE_A4, 500);
   delay(100);
-  tone(9, NOTE_C3, 750);
+  tone(PinMap::piezo, NOTE_C3, 750);
   delay(100);
-  tone(9, NOTE_A4, 500);
+  tone(PinMap::piezo, NOTE_A4, 500);
   delay(500);
 }
 
@@ -846,7 +850,7 @@ void loop() {
           break;
         case STATE_ALARMING:
         {
-          if ( (PINB & _BV(SWITCH_PIN)) != 0) {
+          if ( (*switch_pin.reg & switch_pin.bitmask) != 0) {
             stop_alarm();
           }
           else {
