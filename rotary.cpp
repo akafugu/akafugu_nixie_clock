@@ -85,9 +85,6 @@ void Rotary::begin()
   ROTARY_DDR &= ~(_BV(ROTARY_1));
   ROTARY_DDR &= ~(_BV(ROTARY_2));
 
-  // rotary encoder button
-  ROTARY_DDR &= ~(_BV(BUTTON)); // button as input
-
   // enable pullups for all rotary encoder pins
   ROTARY_PORT |= _BV(BUTTON) | _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
   
