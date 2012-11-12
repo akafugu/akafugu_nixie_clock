@@ -86,7 +86,7 @@ void Rotary::begin()
   ROTARY_DDR &= ~(_BV(ROTARY_2));
 
   // enable pullups for all rotary encoder pins
-  ROTARY_PORT |= _BV(BUTTON) | _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
+  ROTARY_PORT |= _BV(ROTARY_1) | _BV(ROTARY_2); // enable pullup  
   
   // set up interrupt for rotary encoder pins
   PCICR |= (1 << PCIE0);
