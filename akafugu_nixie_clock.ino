@@ -574,7 +574,7 @@ void read_rtc(void)
 
   // check for display sleep mode
   if (g_screensaver && t->hour >= SLEEP_MODE_START_TIME && t->hour < SLEEP_MODE_END_TIME) {
-    data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = 10;
+    data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = 10;
     set_dots(false, false);
     return;
   }
@@ -625,7 +625,7 @@ void read_rtc(void)
 void start_alarm()
 {
   // blank display
-  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = 10;
+  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = 10;
   set_number(10);
   set_dots(false, false);
   
@@ -668,7 +668,7 @@ void stop_alarm()
 
 void sound_alarm()
 {
-  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = data[6] = 10;  
+  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = 10;  
   
   tone(PinMap::piezo, NOTE_A4, 500);
   delay(100);
