@@ -373,26 +373,26 @@ void set_indicator(uint8_t intensity, bool override_state = false)
 // Display multiplex routine optimized for 4 digits
 void display_multiplex_4(void)
 {
-  if (multiplex_counter == 0)
+  if (multiplex_counter >= 0 && multiplex_counter <= 4)
     clear_display();
-  else if (multiplex_counter >= 1 && multiplex_counter <= 10)
+  else if (multiplex_counter >= 5 && multiplex_counter <= 14)
     display_on ? write_nixie(0, data[5]) : clear_display();
-  else if (multiplex_counter == 11)
+  else if (multiplex_counter >= 15 && multiplex_counter <= 19)
     clear_display();
-  else if (multiplex_counter >= 12 && multiplex_counter <= 21)
+  else if (multiplex_counter >= 20 && multiplex_counter <= 29)
     display_on ? write_nixie(1, data[4]) : clear_display();
-  else if (multiplex_counter == 22)
+  else if (multiplex_counter >= 30  && multiplex_counter <= 34)
     clear_display();
-  else if (multiplex_counter >= 23 && multiplex_counter <= 32)
+  else if (multiplex_counter >= 35 && multiplex_counter <= 44)
     display_on ? write_nixie(2, data[3]) : clear_display();
-  else if (multiplex_counter == 33)
+  else if (multiplex_counter >= 45  && multiplex_counter <= 49)
     clear_display();
-  else if (multiplex_counter >= 34 && multiplex_counter <= 43)
+  else if (multiplex_counter >= 50 && multiplex_counter <= 59)
     display_on ? write_nixie(3, data[2]) : clear_display();
 
   multiplex_counter++;
 
-  if (multiplex_counter == 44) multiplex_counter = 0;
+  if (multiplex_counter == 60) multiplex_counter = 0;
 }
 
 // Display multiplex routine for up to 6 digits
@@ -449,8 +449,6 @@ uint32_t rnd(void);
 
 void write_nixie(uint8_t digit, uint8_t value)
 {
-  clear_display();
-
   if (g_blink_on) {
     if (g_blank == 4) { clear_display(); return; }
     else if (g_blank == 1 && (digit == 0 || digit == 1)) { clear_display(); return; }
