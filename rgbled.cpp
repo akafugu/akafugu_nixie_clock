@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2012 Akafugu Corporation
+ * (C) 2012-13 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -13,8 +13,15 @@
  *
  */
 
+#include "global.h"
+
+#if defined(BOARD_STANDARD) || defined(BOARD_MK2)
+
 #include "rgbled.h"
 #include <Wire.h>
+
+void seed_random(uint32_t seed);
+uint32_t rnd(void);
 
 #define PCA9685_ADDR 0x40
 uint8_t _pca9685_address = PCA9685_ADDR;
@@ -24,6 +31,9 @@ uint8_t _pca9685_address = PCA9685_ADDR;
 
 unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8) | l; }
 #define word(...) makeWord(__VA_ARGS__)
+
+void seed_random(uint32_t seed);
+uint32_t rnd(void);
 
 //Wake PCA9685 oscillator and enable auto increment
 void pca9685_wake(void)
@@ -122,23 +132,6 @@ void set_rgb_mode(uint8_t mode)
 extern volatile int8_t g_pulse_direction;
 extern volatile uint16_t g_pulse_value;
 
-
-// random number seed
-volatile uint32_t lfsr = 0xbeefcacc;
-
-void seed_random(uint32_t seed)
-{
-	lfsr = seed;
-}
-
-uint32_t rnd(void)
-{
-	// http://en.wikipedia.org/wiki/Linear_feedback_shift_register
-	// Galois LFSR: taps: 32 31 29 1; characteristic polynomial: x^32 + x^31 + x^29 + x + 1 */
-  	lfsr = (lfsr >> 1) ^ (-(lfsr & 1u) & 0xD0000001u);
-	return lfsr;
-}
-
 // pseudo-random pure-color fader
 void solid_color_fade()
 {
@@ -150,7 +143,6 @@ void solid_color_fade()
   if (fade_color == 0) {
     seed_random(g_pulse_value);
   }
-  
 
   set_rgb_all(red, green, blue);
   
@@ -183,7 +175,6 @@ void solid_color_fade()
 }
 
 #define OFFSET 1900
-int16_t counter = 0;
 
 void rgb_tick(void)
 {
@@ -209,4 +200,7 @@ void rgb_tick(void)
 		solid_color_fade();
         }
 }
+
+#endif // BOARD_STANDARD || BOARD_MK2
+
 

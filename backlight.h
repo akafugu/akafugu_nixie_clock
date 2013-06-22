@@ -13,28 +13,31 @@
  *
  */
 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+#ifndef BACKLIGHT_H_
+#define BACKLIGHT_H_
 
-#include <stdbool.h>
+#include "global.h"
 
-struct BUTTON_STATE
-{
-	bool b1_keydown : 1;
-	bool b1_keyup : 1;
-	bool b1_repeat : 1;
-	bool b2_keydown : 1;
-	bool b2_keyup : 1;
-	bool b2_repeat : 1;
-	bool b3_keydown : 1;
-	bool b3_keyup : 1;
-	bool b3_repeat : 1;
-	bool both_held : 1;
-	bool none_held : 1;
-};
-
-void initialize_button(int8_t pin1, int8_t pin2);
-void get_button_state(struct BUTTON_STATE* buttons);
-void button_timer(void);
-
+#if defined(HAVE_RGB_BACKLIGHT)
+#define BACKLIGHT_MODES 11
+#elif defined(HAVE_LED_BACKLIGHT)
+#define BACKLIGHT_MODES 5
 #endif
+
+void init_backlight();
+
+void set_backlight_mode(uint8_t mode);
+void increment_backlight_mode();
+
+void push_backlight_mode();
+void pop_backlight_mode();
+
+void set_backlight_hh();
+void set_backlight_mm();
+void set_backlight_ss();
+
+void backlight_tick();
+
+#endif // BACKLIGHT_H_
+
+

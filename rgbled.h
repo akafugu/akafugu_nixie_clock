@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2012 Akafugu Corporation
+ * (C) 2012-13 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,6 @@
 #include <stdbool.h>
 
 #include <avr/io.h>
-
-#define PCA9685_SLAVE_ADDR 0x40
 
 void pca9685_wake(void);
 void pca9685_PWM_precale(uint8_t prescale);

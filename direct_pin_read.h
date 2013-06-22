@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2011-12 Akafugu Corporation
+ * (C) 2012-13 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
  */
 
 // Based on code in this library http://www.pjrc.com/teensy/td_libs_Encoder.html
-// Modified by Akafugu for VFDDeluxe Firmware Support
+// Modified by Akafugu for The Akafugu Nixie Clock / Diet Nixie Firmware Support
 
 #ifndef DIRECT_PIN_READ_H_
 #define DIRECT_PIN_READ_H_

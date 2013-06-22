@@ -2,11 +2,32 @@
 The Akafugu Nixie Clock
 ------------------------
 
-Firmware for The Akafugu Nixie Clock
+Firmware for The Akafugu Nixie Clock.
 
 The Akafugu Nixie Clock is a fun to build stylish clock kit that uses old-fashioned neon Nixie tubes.
 
 See the [product page](http://www.akafugu.jp/posts/products/nixie/) for more information.
+
+Compiling
+---------
+
+There are two revisions of The Akafugu Nixie Clock available.
+Version 1 and version 2.
+
+Before compiling, you must set the type of clock you have by editing
+global.h
+
+Look in the beginning of the file:
+
+// define the type of board we are compiling for
+// The Akafugu Nixie Clock (http://www.akafugu.jp/posts/products/nixie/)
+//#define BOARD_STANDARD
+// Diet Nixie board (http://www.akafugu.jp/posts/products/diet_nixie/)
+//#define BOARD_DIET
+// The Akafugu Nixie Clock mk2 (http://www.akafugu.jp/posts/products/nixie/)
+//#define BOARD_MK2
+
+Uncomment the #define line containing the board you are compiling for.
 
 Programming
 ----------

@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2012 Akafugu Corporation
+ * (C) 2012-13 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -13,11 +13,13 @@
  *
  */
 
+#include "global.h"
+
 #include "rotary.h"
 #include <avr/interrupt.h>
 
 extern volatile bool g_update_rtc;
-extern volatile bool g_update_rgb;
+extern volatile bool g_update_backlight;
 extern volatile bool g_blink_on;
 extern volatile uint16_t g_rotary_moved_timer;
 
@@ -41,6 +43,14 @@ volatile uint8_t s_rotary_raw_pos;
 // Current position of rotary encoder
 volatile uint8_t s_rotary_pos;
 
+#if defined(BOARD_STANDARD) || defined(BOARD_MK2) || defined(BOARD_MODULAR)
+#  define POSITION_INCREMENT(v, n) (v) += (n)
+#  define POSITION_DECREMENT(v, n) (v) -= (n)
+#elif defined(BOARD_DIET)
+#  define POSITION_INCREMENT(v, n) (v) -= (n)
+#  define POSITION_DECREMENT(v, n) (v) += (n)
+#endif // board type
+
 // fixme: set flag to see if rotary encoder is moving or not
 // Rotary encoder interrupt
 // Based on code in this library http://www.pjrc.com/teensy/td_libs_Encoder.html
@@ -54,13 +64,13 @@ ISR( PCINT0_vect )
     case 0: case 5: case 10: case 15:
       break;
     case 1: case 7: case 8: case 14:
-      s_rotary_raw_pos++; break;
+      POSITION_INCREMENT(s_rotary_raw_pos, 1); break;
     case 2: case 4: case 11: case 13:
-      s_rotary_raw_pos--; break;
+      POSITION_DECREMENT(s_rotary_raw_pos, 1); break;
     case 3: case 12:
-      s_rotary_raw_pos += 2; break;
+      POSITION_INCREMENT(s_rotary_raw_pos, 2); break;
     default:
-      s_rotary_raw_pos -= 2; break;
+      POSITION_DECREMENT(s_rotary_raw_pos, 2); break;
     }
 
   s_rotary_pos = s_rotary_raw_pos;
@@ -69,7 +79,7 @@ ISR( PCINT0_vect )
   // wrap position
   rotary.wrap();
     
-  g_update_rgb = true;
+  g_update_backlight = true;
   g_update_rtc = true;
   
   // set cooldown timer to disable blink for a small time frame after
@@ -113,7 +123,28 @@ void Rotary::setRange(uint8_t from, uint8_t to)
 
 void Rotary::setPosition(uint8_t value)
 {
-  s_rotary_raw_pos = s_rotary_pos = value * m_divider;
+  s_rotary_raw_pos =  value;
+  s_rotary_pos = value * m_divider;
+  
+  wrap();
+  
+  //s_rotary_raw_pos = s_rotary_pos = value * m_divider;  
+}
+
+void Rotary::incrementPosition()
+{
+  s_rotary_raw_pos++;
+  s_rotary_pos += m_divider;
+  
+  wrap();    
+}
+
+void Rotary::decrementPosition()
+{
+  s_rotary_raw_pos--;
+  s_rotary_pos -= m_divider;
+  
+  wrap();
 }
 
 void Rotary::wrap()

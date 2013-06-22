@@ -1,6 +1,6 @@
 /*
  * The Akafugu Nixie Clock
- * (C) 2012 Akafugu Corporation
+ * (C) 2012-13 Akafugu Corporation
  *
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,10 @@ public:
   
   void setDivider(uint8_t divider);
   void setRange(uint8_t from, uint8_t to);
+  
   void setPosition(uint8_t value);
+  void incrementPosition();
+  void decrementPosition();
   
   void wrap();
 
