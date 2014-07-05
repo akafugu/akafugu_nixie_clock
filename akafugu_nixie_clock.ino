@@ -113,7 +113,7 @@ volatile bool g_screensaver = false;
 // Cathode anti-poisoning
 volatile bool g_antipoison = true;
 // Number of digits
-#ifdef BOARD_MODULAR
+#ifdef MODULAR_6D
 volatile uint8_t g_digits = 6;
 #else
 volatile uint8_t g_digits = 4;

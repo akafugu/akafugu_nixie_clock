@@ -23,7 +23,11 @@
 // Diet Nixie board (http://www.akafugu.jp/posts/products/diet_nixie/)
 //#define BOARD_DIET
 // The Akafugu Nixie Clock mk2 (http://www.akafugu.jp/posts/products/nixie/)
-#define BOARD_MK2
+//#define BOARD_MK2
+// Nixie Modular Clock
+#define BOARD_MODULAR
+#define MODULAR_4D
+//#define MODULAR_6D
 
 #if defined(BOARD_STANDARD) && defined(BOARD_DIET)
 #error Only one board type can be defined (either BOARD_STANDARD, BOARD_DIET or BOARD_MK2)

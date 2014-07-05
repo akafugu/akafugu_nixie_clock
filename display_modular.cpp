@@ -183,7 +183,7 @@ void display_multiplex(void)
       digitalWrite(PinMap::dot2, LOW);
     }
   
-  
+#ifdef MODULAR_6D
   if (multiplex_counter == 0) {
     clear_display();
     display_on ? write_nixie(0, data[5], data[2]) : clear_display();    
@@ -196,25 +196,26 @@ void display_multiplex(void)
     clear_display();
     display_on ? write_nixie(2, data[3], data[0]) : clear_display();
   }
-  /*
-  else if (multiplex_counter == 3) {
-    clear_display();
-
-    if (display_on) {
-      digitalWrite(PinMap::dot1, dot_status);
-      digitalWrite(PinMap::dot2, dot_status);
-    }
-    else {
-      clear_display();
-      digitalWrite(PinMap::dot1, LOW);
-      digitalWrite(PinMap::dot2, LOW);
-    }
-  }
-  */
 
   multiplex_counter++;
 
   if (multiplex_counter == 6) multiplex_counter = 0;
+#endif // MODULAR_6D
+
+#ifdef MODULAR_4D
+  if (multiplex_counter == 0) {
+    clear_display();
+    display_on ? write_nixie(0, data[5], data[3]) : clear_display();    
+  }
+  else if (multiplex_counter == 2) {
+    clear_display();
+    display_on ? write_nixie(1, data[4], data[2]) : clear_display();
+  }
+
+  multiplex_counter++;
+
+  if (multiplex_counter == 4) multiplex_counter = 0;
+#endif // MODULAR_4D
 }
 
 
