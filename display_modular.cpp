@@ -235,7 +235,8 @@ void write_hv5812_8bit(uint8_t data)
 }
 
 void write_nixie(uint8_t digit, uint8_t value1, uint8_t value2)
-{
+{  
+#ifdef MODULAR_6D
   if (g_blink_on) {
     if (g_blank == 4) { value1 = value2 = 10; }
     
@@ -244,6 +245,15 @@ void write_nixie(uint8_t digit, uint8_t value1, uint8_t value2)
     else if (g_blank == 2 && (digit == 0)) { value2 = 10; }
     else if (g_blank == 3 && (digit == 1 || digit == 2)) { value2 = 10; }
   }
+#endif // MODULAR_6D
+
+#ifdef MODULAR_4D
+  if (g_blink_on) {
+    if (g_blank == 4) { value1 = value2 = 10; }
+    else if (g_blank == 1) { value1 = 10; }
+    else if (g_blank == 2) { value2 = 10; }
+  }
+#endif // MODULAR_4D
 
   set_number(value1, value2);
 
