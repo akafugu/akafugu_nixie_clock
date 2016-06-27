@@ -43,7 +43,7 @@ volatile uint8_t s_rotary_raw_pos;
 // Current position of rotary encoder
 volatile uint8_t s_rotary_pos;
 
-#if defined(BOARD_STANDARD) || defined(BOARD_MK2) || defined(BOARD_MODULAR)
+#if defined(BOARD_STANDARD) || defined(BOARD_MK2) || defined(BOARD_MODULAR) || defined(BOARD_MK4)
 #  define POSITION_INCREMENT(v, n) (v) += (n)
 #  define POSITION_DECREMENT(v, n) (v) -= (n)
 #elif defined(BOARD_DIET)

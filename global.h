@@ -25,9 +25,14 @@
 // The Akafugu Nixie Clock mk2 (http://www.akafugu.jp/posts/products/nixie/)
 //#define BOARD_MK2
 // Nixie Modular Clock
-#define BOARD_MODULAR
-#define MODULAR_4D
+//#define BOARD_MODULAR
+//#define MODULAR_4D
 //#define MODULAR_6D
+// The Akafugu Nixie Clock mk4
+#define BOARD_MK4
+#define MODULAR_6D
+
+
 
 #if defined(BOARD_STANDARD) && defined(BOARD_DIET)
 #error Only one board type can be defined (either BOARD_STANDARD, BOARD_DIET or BOARD_MK2)
@@ -41,7 +46,7 @@
 #error Only one board type can be defined (either BOARD_STANDARD, BOARD_DIET or BOARD_MK2)
 #endif
 
-#if !defined(BOARD_STANDARD) && !defined(BOARD_DIET) && !defined(BOARD_MK2) && !defined(BOARD_MODULAR)
+#if !defined(BOARD_STANDARD) && !defined(BOARD_DIET) && !defined(BOARD_MK2) && !defined(BOARD_MODULAR) && !defined(BOARD_MK4)
 #error No board type defined (must defined either BOARD_STANDARD or BOARD_DIET)
 #endif
 
@@ -197,7 +202,6 @@ struct PinMap
     static const int8_t blank = 13;
 };
 
-
 #elif defined(BOARD_MK2)
 
 // The Akafugu Nixie Clock mk2 pinmap
@@ -218,6 +222,35 @@ struct PinMap
     // Nixie anodes (digits)
     static const int8_t digit0 = 2;
     static const int8_t digit1 = 4;    
+    // HV518 / HV5812
+    static const int8_t data = A0;
+    static const int8_t clock = A1;
+    static const int8_t latch = A2;
+    static const int8_t blank = 11;
+};
+
+#elif defined(BOARD_MK4)
+
+// The Akafugu Nixie Clock mk2 pinmap
+struct PinMap
+{
+    // Rotary encoder
+    static const int8_t button = 13;
+    // Alarm button
+    static const int8_t button_alarm = 10;
+    // Colon dots
+    static const int8_t dot1 =  7;
+    static const int8_t dot2 = A3;
+    // Alarm dot
+    static const int8_t alarm_dot = 8;
+    // RTC SQW pin
+    static const int8_t sqw = 3;
+    // Piezo
+    static const int8_t piezo = 9;
+    // Nixie anodes (digits)
+    static const int8_t digit0 = 2;
+    static const int8_t digit1 = 4;     
+    static const int8_t digit2 = 11; 
     // HV518 / HV5812
     static const int8_t data = A0;
     static const int8_t clock = A1;

@@ -581,7 +581,7 @@ void setup() {
 #  define CHARGE_MID 300
 #  define CHARGE_HIGH 450
 #  define CHARGE_TEST 800
-#elif defined(BOARD_DIET) || defined(BOARD_MODULAR)
+#elif defined(BOARD_DIET) || defined(BOARD_MODULAR) || defined(BOARD_MK4)
 #  define CHARGE_LOW 10
 #  define CHARGE_MID 20
 #  define CHARGE_HIGH 30
@@ -880,7 +880,7 @@ void loop() {
           // fixme: define for all button/slide switch combination
 #if defined(BOARD_STANDARD) || defined(BOARD_MK2)
           if ( (*switch_pin.reg & switch_pin.bitmask) != 0) {
-#elif defined(BOARD_DIET) || defined(BOARD_MODULAR) || defined(BOARD_MK2)
+#elif defined(BOARD_DIET) || defined(BOARD_MODULAR) || defined(BOARD_MK4)
           if ( (*button1.reg & button1.bitmask) == 0 || (*button2.reg & button2.bitmask) == 0) {
 #endif
             stop_alarm();
@@ -1009,7 +1009,7 @@ void loop() {
         {
           data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = g_test_counter;
           
-#if defined(BOARD_STANDARD) || defined(BOARD_MK2)
+#if defined(BOARD_STANDARD) || defined(BOARD_MK2) || defined(BOARD_MK4)
           if (button.b1_keyup) {
 #elif defined(BOARD_DIET) || defined(BOARD_MODULAR)
             if (button.b2_keyup) {

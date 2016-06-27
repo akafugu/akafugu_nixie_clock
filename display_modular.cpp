@@ -15,7 +15,7 @@
 
 #include "global.h"
 
-#ifdef BOARD_MODULAR
+#if defined(BOARD_MODULAR) || defined(BOARD_MK4)
 
 extern uint8_t display_on;
 extern uint8_t digits;

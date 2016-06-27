@@ -18,7 +18,72 @@
 static uint8_t saved_mode;
 extern volatile uint8_t g_digits;
 
-#if defined(HAVE_RGB_BACKLIGHT)
+#if defined(HAVE_WS2812_BACKLIGHT)
+
+void fade_in_backlight(int ch)
+{
+  for (uint16_t i = 0; i <= 4000; i+=10) {
+    //pca9685_set_channel(ch, i);
+    delay(1);
+  }
+}
+
+void test_backlight()
+{
+  fade_in_backlight(0);
+  delay(1000);
+  
+  for (uint8_t i = 1; i < 16; i++) {
+    //pca9685_set_channel(i-1, 0);
+    fade_in_backlight(i);
+    delay(1000);
+  }
+}
+
+void init_backlight()
+{
+    //pca9685_wake();
+    
+    // Turn off all LEDs
+    for (uint8_t i = 0; i < 16; i++) {
+        //pca9685_set_channel(i, 0);      
+    }
+}
+
+void set_backlight_mode(uint8_t mode)
+{
+    //saved_mode = mode;
+    //set_rgb_mode(mode);
+}
+
+void set_backlight_hh()
+{
+    //set_rgb_mode(0);
+    //set_rgb_ch(0, 1000, 1000, 1000);
+    //set_rgb_ch(1, 1000, 1000, 1000);
+}
+
+void set_backlight_mm()
+{
+    //set_rgb_mode(0);
+    //set_rgb_ch(2, 1000, 1000, 1000);
+    //set_rgb_ch(3, 1000, 1000, 1000);
+}
+
+void set_backlight_ss()
+{
+    //set_rgb_mode(0);
+    //set_rgb_ch(2, 0, 500, 1000);
+    //set_rgb_ch(3, 0, 500, 1000);
+}
+
+void backlight_tick()
+{
+    //rgb_tick();
+}
+
+
+#elif defined(HAVE_RGB_BACKLIGHT)
 
 #include "rgbled.h"
 

@@ -18,7 +18,7 @@
 
 #include "global.h"
 
-#if defined(HAVE_RGB_BACKLIGHT)
+#if defined(HAVE_RGB_BACKLIGHT) || defined(HAVE_WS2812_BACKLIGHT)
 #define BACKLIGHT_MODES 11
 #elif defined(HAVE_LED_BACKLIGHT)
 #define BACKLIGHT_MODES 5
